@@ -3,6 +3,7 @@ from flask_restful import Resource, Api
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import numpy as np
+import time
 
 app = Flask(__name__)
 api = Api(app)
@@ -23,13 +24,18 @@ def get_avg_colour():
 
 
 def capture_image():
-    cap = cv2.VideoCapture(0)
-    if cap.isOpened():
-        _, frame = cap.read()
-        cap.release()
-        cv2.destroyAllWindows()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return frame
+    # Initialize rasp pi camera and grab reference to raw camera
+    camera = PiCamera()
+    rawCapture = PiRGBArray(camera)
+
+    # Allow the camera to warmup
+    time.sleep(0.1)
+
+    # Grab image form the camera
+    camera.capture(rawCapture, format='bgr')
+    image = rawCapture.array
+
+    return image
 
 
 def unique_count_app(image_array):
