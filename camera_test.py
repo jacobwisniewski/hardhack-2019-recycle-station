@@ -11,7 +11,7 @@ def capture_image():
     time.sleep(0.1)
 
     # Grab image form the camera
-    camera.capture(rawCapture, format='bgr')
+    camera.capture(rawCapture, format='rgb')
     image = rawCapture.array
 
     return image
