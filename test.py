@@ -1,70 +1,67 @@
-from flask import Flask, abort, request
+from flask import Flask
 from flask_restful import Resource, Api
-from picamera.array import PiRGBArray
-from picamera import PiCamera
 import cv2
-import time
 import numpy as np
-from sklearn.cluster import KMeans
-from PIL import Image
-
 
 app = Flask(__name__)
 api = Api(app)
 
 
+ITEM_DATA = {
+    'can': [8, 8, 8],
+    'bottle': [4,  8, 10],
+    'paper': [21, 55, 71],
+    'pencil case': [8,  9, 10]
+}
+
+
 def get_avg_colour():
     img = capture_image()
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-    img = img.reshape((img.shape[0] * img.shape[1],3)) #represent as row*column,channel number
-    clt = KMeans(n_clusters=3) #cluster number
-    clt.fit(img)
-    return clt.cluster_centers_
+    avg_colour = np.mean(img, axis=(0, 1)).astype(int)
+    return avg_colour
 
 
 def capture_image():
-    # Initialize rasp pi camera and grab reference to raw camera
-    camera = PiCamera()
-    rawCapture = PiRGBArray(camera)
-
-    # Allow the camera to warmup
-    time.sleep(0.1)
-
-    # Grab image form the camera
-    camera.capture(rawCapture, format='bgr')
-    image = rawCapture.array
-
-    return image
+    cap = cv2.VideoCapture(0)
+    if cap.isOpened():
+        _, frame = cap.read()
+        cap.release()
+        cv2.destroyAllWindows()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        return frame
 
 
 def unique_count_app(image_array):
     return np.mean(image_array, axis=(0, 1))
 
 
-def display_avg():
-    colours = get_avg_colour()
-    w, h = 600, 200
-    data = np.zeros((h, w, 3), dtype=np.uint8)
-    for x in range(w):
-        for y in range(h):
-            if x <= 200:
-                data[y, x] = colours[0]
-            elif x <= 400:
-                data[y, x] = colours[1]
-            else:
-                data[y, x] = colours[2]
-    image = Image.fromarray(data, 'RGB')
-    image.show()
+def get_item(colour):
+    min_obj = None
+    min_dist = None
+    for obj, obj_col in ITEM_DATA.items():
+        dist = np.linalg.norm(colour - obj_col)
+        if not min_dist or dist < min_dist:
+            min_obj = obj
+            min_dist = dist
 
+    return min_obj
 
-color_dict = {
-
-}
 
 class CycleStation(Resource):
     def get(self):
-        # Return yes or no
+        print('Getting color')
+        colour = get_avg_colour()
+        item = get_item(colour)
+        print(item)
 
-        pass
+        if item in ['can', 'bottle']:
+            return 'Y'
+        else:
+            return 'N'
+
+
+api.add_resource(CycleStation, '/')
+
+if __name__ == '__main__':
+    app.run(debug=True)
 

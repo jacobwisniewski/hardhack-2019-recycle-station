@@ -1,6 +1,6 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
-import time
+
 
 def capture_image():
     # Initialize rasp pi camera and grab reference to raw camera
@@ -11,7 +11,7 @@ def capture_image():
     time.sleep(0.1)
 
     # Grab image form the camera
-    camera.capture(rawCapture, format='rgb')
+    camera.capture(rawCapture, format='bgr')
     image = rawCapture.array
 
     return image
