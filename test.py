@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, Api
-import cv2
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import numpy as np
 
 app = Flask(__name__)
