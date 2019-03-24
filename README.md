@@ -4,7 +4,7 @@
 
 Placement: 3rd place
 
-Team members: Jacob Wisniewski, Steven Tran, Eddie Yao, Joseph Hao
+Team members: Steven Tran, Joseph Hao, Eddie Yao, Jacob Wisniewski 
 
 ## Pitch
 
