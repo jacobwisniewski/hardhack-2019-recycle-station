@@ -4,6 +4,8 @@
 
 Placement: 3rd place
 
+Team members: Jacob Wisniewski, Steven Tran, Eddie Yao, Joseph Hao
+
 ## Pitch
 
 ![Logo](/resources/RecycleStationv2.png)
