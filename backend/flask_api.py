@@ -35,6 +35,8 @@ def capture_image():
     camera.capture(rawCapture, format='bgr')
     image = rawCapture.array
 
+    camera.close()
+
     return image
 
 
